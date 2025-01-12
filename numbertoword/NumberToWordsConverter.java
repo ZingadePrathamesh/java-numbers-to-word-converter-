@@ -18,6 +18,10 @@ public class NumberToWordsConverter {
             "", "Thousand", "Million", "Billion", "Trillion"
     };
 
+    private static final String ZERO = "Zero";
+    private static final String POINT = " Point";
+    private static final String NEGATIVE = "Negative ";
+
     public String convert(BigDecimal number) {
         if (number == null) {
             return "Invalid Input";
@@ -34,13 +38,13 @@ public class NumberToWordsConverter {
         // Convert whole part to words
         StringBuilder result = new StringBuilder();
         if (isNegative) {
-            result.append("Negative ");
+            result.append(NEGATIVE);
         }
         result.append(convertWholeNumberToWords(wholePart));
 
         // Convert fractional part to words
         if (!fractionalPartStr.isEmpty()) {
-            result.append(" Point");
+            result.append(POINT);
             for (char digit : fractionalPartStr.toCharArray()) {
                 int digitValue = Character.getNumericValue(digit);
                 result.append(" ").append(digitValue == 0 ? "Zero" : units[digitValue]);
@@ -52,10 +56,10 @@ public class NumberToWordsConverter {
 
     private static String convertWholeNumberToWords(int number) {
         if (number == 0) {
-            return "Zero";
+            return ZERO;
         }
 
-        String words = "";
+        StringBuilder words = new StringBuilder();
         int power = 0;
 
         while (number > 0) {
@@ -63,14 +67,17 @@ public class NumberToWordsConverter {
 
             if (chunk > 0) {
                 String chunkWords = convertChunk(chunk);
-                words = chunkWords + (power > 0 ? " " + powers[power] : "") + " " + words;
+                if (power > 0) {
+                    words.insert(0, powers[power] + " ");
+                }
+                words.insert(0, chunkWords + " ");
             }
 
             number /= 1000;
             power++;
         }
 
-        return words.trim();
+        return words.toString().trim();
     }
 
     private static String convertChunk(int number) {
