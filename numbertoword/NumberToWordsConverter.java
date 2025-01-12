@@ -33,7 +33,10 @@ public class NumberToWordsConverter {
         // Split the number into whole and fractional parts
         BigDecimal[] parts = number.abs().divideAndRemainder(BigDecimal.ONE);
         int wholePart = parts[0].intValue(); // Get the integer part
-        String fractionalPartStr = parts[1].toPlainString().substring(2); // Get the fractional part as a string
+
+        String fractionalPartStr = parts[1].compareTo(BigDecimal.ZERO) > 0
+                ? parts[1].toPlainString().substring(2)
+                : ""; // Get fractional part only if it exists
 
         // Convert whole part to words
         StringBuilder result = new StringBuilder();
@@ -47,7 +50,7 @@ public class NumberToWordsConverter {
             result.append(POINT);
             for (char digit : fractionalPartStr.toCharArray()) {
                 int digitValue = Character.getNumericValue(digit);
-                result.append(" ").append(digitValue == 0 ? "Zero" : units[digitValue]);
+                result.append(" ").append(digitValue == 0 ? ZERO : units[digitValue]);
             }
         }
 
