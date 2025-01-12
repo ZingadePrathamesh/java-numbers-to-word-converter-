@@ -26,18 +26,18 @@ public class NumberToWordsConverter {
         // Split the number into whole and fractional parts
         BigDecimal[] parts = number.abs().divideAndRemainder(BigDecimal.ONE);
         int wholePart = parts[0].intValue(); // Get the integer part
-        BigDecimal fractionalPart = parts[1].movePointRight(parts[1].scale()); // Get the fractional part as whole number
+        String fractionalPartStr = parts[1].toPlainString().substring(2); // Get the fractional part as a string
 
         // Convert whole part to words
         StringBuilder result = new StringBuilder();
         result.append(convertWholeNumberToWords(wholePart));
 
         // Convert fractional part to words
-        if (fractionalPart.compareTo(BigDecimal.ZERO) > 0) {
+        if (!fractionalPartStr.isEmpty()) {
             result.append(" Point");
-            String fractionalStr = new DecimalFormat("#").format(fractionalPart);
-            for (char digit : fractionalStr.toCharArray()) {
-                result.append(" ").append(units[Character.getNumericValue(digit)]);
+            for (char digit : fractionalPartStr.toCharArray()) {
+                int digitValue = Character.getNumericValue(digit);
+                result.append(" ").append(digitValue == 0 ? "Zero" : units[digitValue]);
             }
         }
 
