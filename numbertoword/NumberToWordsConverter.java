@@ -23,6 +23,9 @@ public class NumberToWordsConverter {
             return "Invalid Input";
         }
 
+        // Check for negative sign
+        boolean isNegative = number.signum() < 0;
+
         // Split the number into whole and fractional parts
         BigDecimal[] parts = number.abs().divideAndRemainder(BigDecimal.ONE);
         int wholePart = parts[0].intValue(); // Get the integer part
@@ -30,6 +33,9 @@ public class NumberToWordsConverter {
 
         // Convert whole part to words
         StringBuilder result = new StringBuilder();
+        if (isNegative) {
+            result.append("Negative ");
+        }
         result.append(convertWholeNumberToWords(wholePart));
 
         // Convert fractional part to words
