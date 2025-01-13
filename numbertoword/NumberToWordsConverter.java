@@ -32,8 +32,7 @@ public class NumberToWordsConverter {
 
         // Split the number into whole and fractional parts
         BigDecimal[] parts = number.abs().divideAndRemainder(BigDecimal.ONE);
-        int wholePart = parts[0].intValue(); // Get the integer part
-
+        BigDecimal wholePart = parts[0]; // Keep whole part as BigDecimal
         String fractionalPartStr = parts[1].compareTo(BigDecimal.ZERO) > 0
                 ? parts[1].toPlainString().substring(2)
                 : ""; // Get fractional part only if it exists
@@ -57,16 +56,18 @@ public class NumberToWordsConverter {
         return result.toString().trim();
     }
 
-    private static String convertWholeNumberToWords(int number) {
-        if (number == 0) {
+    private static String convertWholeNumberToWords(BigDecimal number) {
+        if (number.compareTo(BigDecimal.ZERO) == 0) {
             return ZERO;
         }
 
         StringBuilder words = new StringBuilder();
         int power = 0;
 
-        while (number > 0) {
-            int chunk = number % 1000;
+        while (number.compareTo(BigDecimal.ZERO) > 0) {
+            // Get the last three digits
+            BigDecimal[] divisionResult = number.divideAndRemainder(BigDecimal.valueOf(1000));
+            int chunk = divisionResult[1].intValue();
 
             if (chunk > 0) {
                 String chunkWords = convertChunk(chunk);
@@ -76,7 +77,7 @@ public class NumberToWordsConverter {
                 words.insert(0, chunkWords + " ");
             }
 
-            number /= 1000;
+            number = divisionResult[0]; // Continue with the remaining part
             power++;
         }
 
